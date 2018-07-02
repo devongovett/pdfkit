@@ -186,7 +186,11 @@ module.exports =
     return if text.length is 0
 
     # handle options
-    align = options.align or 'left'
+    if options.dir is 'rtl'
+      align = options.align or 'right'
+    else
+      align = options.align or 'left'
+
     wordSpacing = options.wordSpacing or 0
     characterSpacing = options.characterSpacing or 0
 
@@ -194,7 +198,9 @@ module.exports =
     if options.width
       switch align
         when 'right'
-          textWidth = @widthOfString text.replace(/\s+$/, ''), options
+          lineEndingRe = if options.dir is 'rtl' then /^\s+/ else /\s+$/
+          textWidth = @widthOfString text.replace(lineEndingRe, ''), options
+
           x += options.lineWidth - textWidth
 
         when 'center'
@@ -295,6 +301,7 @@ module.exports =
     # used for embedded fonts.
     if wordSpacing
       words = text.trim().split(/\s+/)
+      words = words.reverse() if options.dir is 'rtl'
       wordSpacing += @widthOfString(' ') + characterSpacing
       wordSpacing *= 1000 / @_fontSize
 

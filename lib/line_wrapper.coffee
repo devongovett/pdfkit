@@ -43,7 +43,10 @@ class LineWrapper extends EventEmitter
     # handle left aligning last lines of paragraphs
     @on 'lastLine', (options) =>
       align = options.align
-      options.align = 'left' if align is 'justify'
+      
+      if options.align is 'justify'
+        options.align = if options.dir is 'rtl' then 'right' else 'left'
+
       @lastLine = true
       
       @once 'line', =>
